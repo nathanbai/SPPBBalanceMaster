@@ -51,7 +51,7 @@ boolean flag_test = false;
 
 int i,num,curtime,stime,ttime = 0;
 int ax1,ax2,ay1,ay2,mag = 0;
-int threshold = 10000;
+int threshold = 15000;
 
 
 void setup(void)
