@@ -7,6 +7,10 @@
 #include "MPU6050.h"
 #include "SoftwareSerial.h"
 #include "IRremote.h"
+#include "Nrf2401.h"
+
+Nrf2401 Radio;
+int16_t remote_heading;
 
 SoftwareSerial WiFlySerial(5,6); //RX  TX
 SoftwareSerial portTwo(8,9);
@@ -183,6 +187,20 @@ void button_case()
   }
 }
 
+int16_t Radio_check()
+{
+    while(!Radio.available()) {
+    //Serial.println("Reading...");
+    };
+    
+    Radio.read();     
+    
+    if(Radio.data[0]=0x55)
+      return true;
+    else
+      return false;
+}
+
 void getHeadingDegrees() {
   if (first_time == true)
   {
@@ -276,10 +294,13 @@ void loop(void)
  }
   
   //Prospective Button Code 
-  while (flag_test == false)
-  {
-    button_case();  
-  }
+//  while (flag_test == false)
+//  {
+//    button_case();  
+//  }
+  do{
+    flag_test = Radio_check();
+  }while(flag_test == false);
   
   //Motion Sensor. Checks for foot movement
   accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
