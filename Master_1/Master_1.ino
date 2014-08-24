@@ -72,6 +72,9 @@ void setup(void)
   pinMode(buzzer,OUTPUT);
   digitalWrite(buzzer,0);
   
+  Radio.localAddress = 1;
+  Radio.rxMode(2);
+  
   Serial.println("Initializing I2C devices...");
   accelgyro.initialize();
   Serial.println("Testing device connections...");
@@ -186,15 +189,15 @@ void button_case()
   }
 }
 
-int16_t Radio_check()
+boolean Radio_check()
 {
     while(!Radio.available()) {
     //Serial.println("Reading...");
     };
     
     Radio.read();     
-    
-    if(Radio.data[0]=0x55)
+    Serial.println(Radio.data[0]);
+    if(Radio.data[0] == 85)
       return true;
     else
       return false;
@@ -300,6 +303,8 @@ void loop(void)
   do{
     flag_test = Radio_check();
   }while(flag_test == false);
+  
+  Serial.println("button pressed");
   
   //Motion Sensor. Checks for foot movement
   accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
