@@ -10,11 +10,10 @@
 #include "Nrf2401.h"
 
 Nrf2401 Radio;
-int16_t remote_heading;
 
-SoftwareSerial WiFlySerial(5,6); //RX  TX
+SoftwareSerial WiFlySerial(11,12);//(5,6); //RX  TX
 SoftwareSerial portTwo(8,9);
-int buttonPin = 2; 
+int buttonPin = 10;//2; 
 int buzzer = 7;  
 int RFIDResetPin = 13;
 int score;
