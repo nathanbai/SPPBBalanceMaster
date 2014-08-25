@@ -73,7 +73,7 @@ void setup(void)
   digitalWrite(buzzer,0);
   
   Radio.localAddress = 1;
-  Radio.rxMode(2);
+  Radio.rxMode(1);
   
   Serial.println("Initializing I2C devices...");
   accelgyro.initialize();
@@ -189,21 +189,46 @@ void button_case()
   }
 }
 
-boolean Radio_check()
+void Radio_check()
 {
-    while(!Radio.available()) {
-    //Serial.println("Reading...");
+    /*while(!Radio.available()) {
+      //Serial.println("Reading...");
     };
     
     Radio.read();     
     Serial.println(Radio.data[0]);
     if(Radio.data[0] == 85)
-      return true;
-    else
-      return false;
+    {
+      WiFiSend(StartSignal);
+      flag_test = true;
+      stime = millis();
+    }*/
+    
+    if(WiFlySerial.available()) {
+      Received = WiFlySerial.read();
+      Serial.println(Received);
+    }
+    
+    if (Received == 50)      
+    {
+      Serial.println("Button pressed");
+      WiFiSend(StartSignal);
+      flag_test = true;
+      stime = millis();
+      
+      Received = 0;
+    }
 }
 
 void getHeadingDegrees() {
+  
+  Serial.print(ax);
+  Serial.print(",");
+    Serial.print(ay);
+    Serial.print(",");
+      Serial.print(mx);
+      Serial.print(",");
+        Serial.println(my);
   if (first_time == true)
   {
    ax1 = ax;
@@ -300,11 +325,12 @@ void loop(void)
 //  {
 //    button_case();  
 //  }
-  do{
-    flag_test = Radio_check();
-  }while(flag_test == false);
+  while( flag_test == false)
+  { 
+    Radio_check();
+  }
   
-  Serial.println("button pressed");
+  //Serial.println("button pressed");
   
   //Motion Sensor. Checks for foot movement
   accelgyro.getMotion9(&ax, &ay, &az, &gx, &gy, &gz, &mx, &my, &mz);
@@ -339,8 +365,7 @@ void loop(void)
     num = 0; 
     Received = 0;
     portTwo.listen();
-  }
-  
+  }  
  
   //complete test if last 10 seconds
   if (curtime-stime >10000 && flag_test == true)
